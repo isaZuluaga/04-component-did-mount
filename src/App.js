@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const url = 'https://jsonplaceholder.typicode.com/users'
+
+class App extends Component {
+  state = {
+    users: [],
+    titleClass: 'yellow'
+  }
+
+  async componentDidMount() {
+    try {
+      const { users } = this.state
+      const response = await fetch(url)
+      const usersResponse = await response.json()
+      this.setState({ users: [...users, ...usersResponse] })
+    } catch (err) {
+      console.log(err)
+    }
+
+    document.addEventListener('mouseenter', this.handleMouseEnter)
+    document.addEventListener('mouseout', this.handleMouseOut)
+  }
+
+  handleMouseEnter = (e) => {
+    e.preventDefault()
+    this.setState({ titleClass: 'green' })
+  }
+
+  handleMouseOut = (e) => {
+    e.preventDefault()
+    this.setState({ titleClass: 'yellow' })
+  }
+
+  render() {
+    const { users, titleClass } = this.state
+
+    return (
+      <>
+        <h1 className={titleClass}>componentDidMount</h1>
+        <ul>
+          {users.map(user => <li key={user.id.toString()}>
+            {user.name}
+          </li>)}
+        </ul>
+      </>
+    );
+  }
 }
 
 export default App;
